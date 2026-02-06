@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>رؤف - مطور ويب</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon-blue: #00d4ff;
+            --space-dark: #05050a;
+            --whatsapp-green: #25d366;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: var(--space-dark);
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* خلفية النجوم المتحركة */
+        .stars-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: radial-gradient(circle at center, #0a0a25 0%, #000 100%);
+            z-index: -2;
+        }
+
+        .star-dot {
+            position: absolute;
+            background: #fff;
+            border-radius: 50%;
+            animation: drift linear infinite;
+        }
+
+        @keyframes drift {
+            from { transform: translateY(0); }
+            to { transform: translateY(-100vh); }
+        }
+
+        /* تنسيق زر الواتساب المتطور */
+        .wa-box {
+            position: absolute; /* البداية */
+            top: 30px;
+            left: 30px;
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            outline: none !important;
+        }
+
+        /* الحالة العائمة (تضاف عبر JS) */
+        .wa-box.is-floating {
+            position: fixed;
+            top: auto;
+            left: auto;
+            bottom: 30px;
+            right: 30px;
+        }
+
+        /* الحالة النهائية في منتصف القسم الأخير */
+        .wa-box.is-final {
+            position: relative;
+            top: 0; left: 0;
+            bottom: 0; right: 0;
+            margin: 40px auto;
+            justify-content: center;
+            transform: scale(1.2);
+        }
+
+        .wa-circle {
+            width: 55px;
+            height: 55px;
+            background: var(--whatsapp-green);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0 20px rgba(37, 211, 102, 0.4);
+            transition: 0.3s;
+        }
+
+        .wa-msg {
+            background: #fff;
+            color: #000;
+            padding: 8px 18px;
+            border-radius: 25px;
+            margin-right: 12px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            display: none; /* مخفي في البداية */
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        /* إظهار النص في الحالة العائمة عند الهوفر أو الحالة النهائية */
+        .wa-box.is-floating:hover .wa-msg,
+        .wa-box.is-final .wa-msg {
+            display: block;
+        }
+
+        /* أنيميشن الظهور */
+        .view-reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: 0.9s ease;
+        }
+
+        .view-reveal.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            text-align: center;
+        }
+
+        .hero-title {
+            font-size: 4rem;
+            background: linear-gradient(to bottom, #fff, var(--neon-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+
+        .custom-card {
+            background: rgba(255,255,255,0.02);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 212, 255, 0.1);
+            border-radius: 30px;
+            padding: 50px 30px;
+            max-width: 900px;
+        }
+
+        .skills-tag {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+
+        footer {
+            padding: 40px;
+            color: #444;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 600px) {
+            .hero-title { font-size: 2.5rem; }
+            .wa-box.is-floating { bottom: 20px; right: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="stars-canvas"></div>
+    <div id="stars-wrap"></div>
+
+    <a href="https://wa.me/201273319681" class="wa-box" id="dynamic-wa" target="_blank">
+        <span class="wa-msg" id="wa-text">تواصل معي لبناء موقعك</span>
+        <div class="wa-circle">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="#fff">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+            </svg>
+        </div>
+    </a>
+
+    <section>
+        <div class="view-reveal" id="intro">
+            <h1 class="hero-title">أنا رؤف</h1>
+            <p style="letter-spacing: 5px; color: var(--neon-blue); font-weight: 600;">مطور مواقع</p>
+        </div>
+    </section>
+
+    <section>
+        <div class="custom-card view-reveal">
+            <h2 style="font-size: 2.2rem; margin-bottom: 30px;">تكنولوجيا المستقبل</h2>
+            <p style="font-size: 1.3rem; line-height: 2; margin-bottom: 30px; color: #ccc;">
+                لا حدود للإبداع معي، هاتِ فكرتك وسأحولها لواقع ملموس. <br>
+                أنا هنا لأجعل موقعك <span style="color: var(--neon-blue);">يبهر الجميع</span>.
+            </p>
+            <div class="skills-wrap">
+                <span class="skills-tag" style="background: #e34c26;">HTML5</span>
+                <span class="skills-tag" style="background: #264de4;">CSS3</span>
+                <span class="skills-tag" style="background: #f7df1e; color: #000;">JavaScript</span>
+                <span class="skills-tag" style="background: #3776ab;">Python</span>
+            </div>
+        </div>
+    </section>
+
+    <section id="last-section">
+        <div class="view-reveal">
+            <h2 style="margin-bottom: 30px;">تواصل الآن</h2>
+            <div id="anchor-point"></div> <div style="margin-top: 50px;">
+                <p style="font-size: 1.8rem; font-weight: 800; color: var(--neon-blue);">صلي على النبي ﷺ</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>بني بواسطة رؤف &copy; 2026</p>
+    </footer>
+
+    <script>
+        // خلق النجوم بلمسة يدوية
+        function makeSky() {
+            const wrap = document.getElementById('stars-wrap');
+            for(let i=0; i<70; i++) {
+                const s = document.createElement('div');
+                s.className = 'star-dot';
+                let size = Math.random() * 2 + 1;
+                s.style.width = size + 'px';
+                s.style.height = size + 'px';
+                s.style.left = Math.random() * 100 + '%';
+                s.style.top = Math.random() * 100 + '%';
+                s.style.opacity = Math.random();
+                s.style.animationDuration = (Math.random() * 15 + 10) + 's';
+                wrap.appendChild(s);
+            }
+        }
+
+        // التحكم في زر الواتساب المتحرك
+        const waBtn = document.getElementById('dynamic-wa');
+        const lastSection = document.getElementById('last-section');
+        const anchor = document.getElementById('anchor-point');
+
+        function handleWA() {
+            const scrollY = window.scrollY;
+            const lastSecTop = lastSection.offsetTop;
+            const windowHeight = window.innerHeight;
+
+            // 1. التبديل للحالة العائمة
+            if (scrollY > 100 && scrollY < (lastSecTop - windowHeight/2)) {
+                waBtn.className = 'wa-box is-floating';
+            } 
+            // 2. التبديل للحالة النهائية في القسم الأخير
+            else if (scrollY >= (lastSecTop - windowHeight/2)) {
+                waBtn.className = 'wa-box is-final';
+                anchor.appendChild(waBtn); // نقله داخل القسم
+            }
+            // 3. العودة للحالة الأصلية في القمة
+            else {
+                waBtn.className = 'wa-box';
+                document.body.appendChild(waBtn);
+            }
+        }
+
+        // أنيميشن الظهور عند التمرير
+        function checkReveal() {
+            const elements = document.querySelectorAll('.view-reveal');
+            elements.forEach(el => {
+                if(el.getBoundingClientRect().top < window.innerHeight * 0.8) {
+                    el.classList.add('show');
+                }
+            });
+        }
+
+        window.addEventListener('scroll', () => {
+            handleWA();
+            checkReveal();
+        });
+
+        window.onload = () => {
+            makeSky();
+            checkReveal();
+            setTimeout(() => document.getElementById('intro').classList.add('show'), 300);
+        };
+    </script>
+</body>
+</html>
